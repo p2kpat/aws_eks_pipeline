@@ -9,44 +9,39 @@ pipeline
 //    }
 
     stages 
+    {
+        stage('Check Jenkins PATH')
 	{
-
-	    stage('Check Jenkins PATH')
-	    {
             steps 
             {
                 sh 'echo $PATH'
             }
         }
         
-        stage('Checkout') 
-		{
+        stage('Checkout')
+	{
             steps 
-			{
-                //dir('/var/lib/jenkins/workspace/') 
-				   //{
-				cleanWs() // Clears the workspace
-                //git url: 'https://github.com/p2kpat/aws_eks_pipeline.git' // Clone the repository, note this is the HTTP url NOT ssh url.
+	    {
+		cleanWs() // Clears the workspace
                 git url: 'https://github.com/p2kpat/aws_eks_pipeline.git', branch: 'main'
-			       //}
             }
         }
+
         stage('Verify Terraform Installation') 
-		{
+	{
             steps
-			{
+	    {
                 sh 'terraform --version'  // Check Terraform installation
             }
         }
-/*
-begin comment		
+
         stage('Set AWS Credentials') 
-		{
+	{
             steps 
-			{
+	    {
                 // Inject AWS credentials from Jenkins Credentials Manager using the below funciton
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'do_admin1']])
-				{
+	        {
                     sh '''
                         # Export AWS credentials as environment variables
                         export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
@@ -59,54 +54,39 @@ begin comment
                 }
             }
         }
-end commnent
-*/		
+        
         stage('Terraform Init')
-		{
+	{
             steps 
-			{
-                //dir('/var/lib/jenkins/workspace/aws_eks_pipeline') 
-				//{
-                    sh 'terraform init' // Initialize Terraform
-                //}
+            {
+               sh 'terraform init' // Initialize Terraform
             }
         }
 		
         stage('Terraform Validate') 
-		{
+	{
             steps 
-			{
-                //dir('/var/lib/jenkins/workspace/aws_eks_pipeline') 
-				//{
-                    sh 'terraform validate' // Validate Terraform configuration
-                //}
+            {
+               sh 'terraform validate' // Validate Terraform configuration
             }
         }
 		
         stage('Terraform Plan') 
-		{
+	{
             steps 
-			{
-                  withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'do_admin1']])
-                  //dir('/home/priyankkpgmail/aws_eks_pipeline')
-				//{
+	    {
                     sh 'terraform plan' // Create a Terraform plan
-                //}
             }
         }
 		
         stage('Terraform Apply') 
-		{
+	{
             steps 
-			{
-                  withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'do_admin1']])
-            //    dir('/var/lib/jenkins/workspace/aws_eks_pipeline') 
-				//{
+	    {
                     sh 'terraform apply -auto-approve' // Apply the Terraform plan
-                //}
             }
         }
-	}
+    }
 /*
 begin comment
     post {
