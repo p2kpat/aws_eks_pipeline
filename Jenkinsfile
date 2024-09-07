@@ -48,8 +48,8 @@ pipeline
                         export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
                         export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
 
-                        # Optionally check AWS CLI access
-                        aws sts get-caller-identity
+       //                 # Optionally check AWS CLI access
+       //                 aws sts get-caller-identity
                     '''
                 }
             }
