@@ -3,7 +3,7 @@
 #https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table
 #use the link above to get more details on the routing table.
 
-resource "aws_routing_table" "routing_table" {
+resource "aws_route_table" "routing_table" {
   vpc_id = aws_vpc.main.id
   route {
     cidr_block = "0.0.0.0/0"
