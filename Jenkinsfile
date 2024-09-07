@@ -2,12 +2,11 @@ pipeline
 {
     agent any
 
-
-    environment 
-	{
-	PATH = "/usr/bin:${env.PATH}"
+//   environment 
+//	{
+//	PATH = "/usr/bin:${env.PATH}"
 //        AWS_DEFAULT_REGION = 'us-east-1'  // Set your AWS region
-    }
+//    }
 
     stages 
 	{
@@ -90,6 +89,7 @@ end commnent
 			{
 			    //dir('/home/priyankkpgmail/aws_eks_pipeline') 
 				//{
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'do_admin1']])
                     sh 'terraform plan' // Create a Terraform plan
                 //}
             }
@@ -101,6 +101,7 @@ end commnent
 			{
             //    dir('/var/lib/jenkins/workspace/aws_eks_pipeline') 
 				//{
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'do_admin1']])
                     sh 'terraform apply -auto-approve' // Apply the Terraform plan
                 //}
             }
