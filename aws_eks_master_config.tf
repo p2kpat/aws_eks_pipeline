@@ -5,7 +5,7 @@
 
 
 resource "aws_eks_cluster" "aws_eks_master" {
-  name     = "aws eks elastic kubernetes service single cluster"
+  name     = "aws_eks_elastic_kubernetes_service_single_cluster"
   role_arn = aws_iam_role.aws_eks_master_node.arn
   vpc_config {
     subnet_ids = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id, aws_subnet.subnet_c.id]
