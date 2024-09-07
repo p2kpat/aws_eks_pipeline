@@ -87,9 +87,9 @@ end commnent
 		{
             steps 
 			{
-			    //dir('/home/priyankkpgmail/aws_eks_pipeline') 
+                  withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'do_admin1']])
+                  //dir('/home/priyankkpgmail/aws_eks_pipeline')
 				//{
-                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'do_admin1']])
                     sh 'terraform plan' // Create a Terraform plan
                 //}
             }
@@ -99,9 +99,9 @@ end commnent
 		{
             steps 
 			{
+                  withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'do_admin1']])
             //    dir('/var/lib/jenkins/workspace/aws_eks_pipeline') 
 				//{
-                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'do_admin1']])
                     sh 'terraform apply -auto-approve' // Apply the Terraform plan
                 //}
             }
