@@ -32,6 +32,12 @@ resource "aws_launch_template" "aws_eks_ec2_instance_template" {
 #  placement {
 #    availability_zone = "us-east-1a"
 #  }
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes        = [image_id] // Ignore changes to specific attributes if necessary
+  }
+
 }
 
 
