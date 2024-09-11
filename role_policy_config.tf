@@ -3,9 +3,18 @@
 #https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role
 #the link above provides more details on the AWS_iam_role.
 
+data "aws_iam_role" "existing_master_role" {
+  name = "aws_eks_master_node_role"
+}
+
+data "aws_iam_role" "existing_worker_role" {
+  name = "aws_eks_worker_node_role"
+}
+
+
 # Define IAM roles
 resource "aws_iam_role" "aws_eks_master_node" {
-  count = var.use_existing_resources ? 0 : 1
+  count = (length(data.aws_iam_role.existing_master_role) > 0) ? 0 : 1
   name  = "aws_eks_master_node_role"
 
   assume_role_policy = jsonencode({
@@ -23,7 +32,7 @@ resource "aws_iam_role" "aws_eks_master_node" {
 }
 
 resource "aws_iam_role" "aws_eks_worker_node" {
-  count = var.use_existing_resources ? 0 : 1
+  count = (length(data.aws_iam_role.existing_worker_role) > 0) ? 0 : 1
   name  = "aws_eks_worker_node_role"
 
   assume_role_policy = jsonencode({
