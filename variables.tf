@@ -4,6 +4,18 @@ variable "ami_id" {
   type        = string
 }
 
+#AWS regions can be set for the availability zones.
+variable "AWS_REGION" {
+  description = "The AWS region to deploy resources in."
+  type        = string
+}
+
+variable "use_existing_resources" {
+  description = "Whether to use existing IAM roles and Launch Templates. Set to true to use existing resources."
+  type        = bool
+  default     = false
+}
+
 
 # AWS Access Key
 #variable "AWS_ACCESS_KEY_ID" {
@@ -16,9 +28,3 @@ variable "ami_id" {
 #  description = "AWS Secret Key"
 #  type        = string
 #}
-#AWS regions can be set for the availability zones.
-variable "AWS_REGION" {
-  description = "The AWS region to deploy resources in."
-  type        = string
-}
-
