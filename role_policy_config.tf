@@ -3,80 +3,77 @@
 #https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role
 #the link above provides more details on the AWS_iam_role.
 
-
-#create the policy to allow creation of eks services using the IAM service user.
+# Define IAM roles
 resource "aws_iam_role" "aws_eks_master_node" {
-  name = "master_node_role_policy"
-  assume_role_policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect"   : "Allow",
-      "Principal":
+  count = var.use_existing_resources ? 0 : 1
+  name  = "aws_eks_master_node_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
       {
-          "Service"  : "eks.amazonaws.com"
+        Effect    = "Allow"
+        Principal = {
+          Service = "eks.amazonaws.com"
+        }
+        Action    = "sts:AssumeRole"
       },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-POLICY
-
-  tags = {
-    name = "aws_eks_pipeline"
-  }
+    ]
+  })
 }
 
-
-#create new role to allow creation of EC2 instance use the HAS(horizontal autoscaling).
 resource "aws_iam_role" "aws_eks_worker_node" {
-  name = "worker_node_role_policy"
-  assume_role_policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "ec2.amazonaws.com"
+  count = var.use_existing_resources ? 0 : 1
+  name  = "aws_eks_worker_node_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect    = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"  # EC2 service principal
+        }
+        Action    = "sts:AssumeRole"
       },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-POLICY
-  tags = {
-    name = "aws_eks_pipeline"
-  }
+      {
+        Effect    = "Allow"
+        Principal = {
+          Service = "eks.amazonaws.com"  # EKS service principal (if needed)
+        }
+        Action    = "sts:AssumeRole"
+      },
+    ]
+  })
 }
 
-
-#Now that the roles are defined we can attach the eks_master role with the policies for EKS Cluster and Service.
+# Policy attachments
 resource "aws_iam_role_policy_attachment" "AmazonEKSClusterPolicy" {
+  count     = var.use_existing_resources ? 0 : 1
+  role      = aws_iam_role.aws_eks_master_node[0].name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role       = aws_iam_role.aws_eks_master_node.name
 }
 
 resource "aws_iam_role_policy_attachment" "AmazonEKSServicePolicy" {
+  count     = var.use_existing_resources ? 0 : 1
+  role      = aws_iam_role.aws_eks_master_node[0].name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
-  role       = aws_iam_role.aws_eks_master_node.name
 }
 
-
-
-#Also we can attach the eks_nodes roles with the aws worker policy,AWS_CNI policy, and the aws_ec2_container_registry
 resource "aws_iam_role_policy_attachment" "AmazonEKSWorkerNodePolicy" {
+  count     = var.use_existing_resources ? 0 : 1
+  role      = aws_iam_role.aws_eks_worker_node[0].name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-  role       = aws_iam_role.aws_eks_worker_node.name
 }
 
 resource "aws_iam_role_policy_attachment" "AmazonEKS_CNI_Policy" {
+  count     = var.use_existing_resources ? 0 : 1
+  role      = aws_iam_role.aws_eks_worker_node[0].name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = aws_iam_role.aws_eks_worker_node.name
 }
 
 resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly" {
+  count     = var.use_existing_resources ? 0 : 1
+  role      = aws_iam_role.aws_eks_worker_node[0].name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-  role       = aws_iam_role.aws_eks_worker_node.name
 }

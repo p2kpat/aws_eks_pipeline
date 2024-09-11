@@ -5,8 +5,8 @@
 
 
 resource "aws_eks_cluster" "aws_eks_master" {
-  name     = "aws_eks_elastic_kubernetes_service_single_cluster"
-  role_arn = aws_iam_role.aws_eks_master_node.arn
+  name     = "aws_eks_cluster_service_master"
+  role_arn = local.master_role_arn
   vpc_config {
     subnet_ids = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id, aws_subnet.subnet_c.id]
   }
@@ -26,7 +26,7 @@ resource "aws_eks_cluster" "aws_eks_master" {
 resource "aws_eks_node_group" "worker_node" {
   cluster_name    = aws_eks_cluster.aws_eks_master.name
   node_group_name = "worker_nodes"
-  node_role_arn   = aws_iam_role.aws_eks_worker_node.arn
+  node_role_arn   = local.worker_role_arn
   subnet_ids      = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id, aws_subnet.subnet_c.id]
   scaling_config {
     desired_size = 1
